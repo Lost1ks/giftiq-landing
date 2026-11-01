@@ -4,80 +4,218 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GiftIQ — Telegram NFT Gifts Portfolio Tracker</title>
-<meta name="description" content="Track your Telegram NFT gifts collection. Real-time floor prices from Tonnel and MRKT. Free bot with AI art generator and bonus free NFT case.">
-<meta name="keywords" content="telegram gifts, tg nft, ton gifts, tonnel, mrkt, snoop dogg nft, plush pepe, durovs cap, nft portfolio">
+<meta name="description" content="Track your Telegram NFT gifts collection value. Real-time floor prices, AI art generator, free NFT case bonus.">
+<meta name="keywords" content="telegram gifts, tg nft, ton gifts, snoop dogg, plush pepe, durovs cap">
 <meta property="og:title" content="GiftIQ — TG Gifts Portfolio">
-<meta property="og:description" content="Track your Telegram NFT gifts collection value in real-time">
+<meta property="og:description" content="Track Telegram NFT gifts in real-time">
 <meta property="og:type" content="website">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#1a0b3d 0%,#4a1b9e 50%,#2b5fcf 100%);color:#fff;min-height:100vh;line-height:1.6}
-.container{max-width:900px;margin:0 auto;padding:60px 20px}
-header{text-align:center;margin-bottom:60px}
-.logo{font-size:72px;font-weight:800;background:linear-gradient(90deg,#fff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
-.tagline{font-size:24px;color:#c4b5fd;margin-bottom:40px}
-.cta{display:inline-block;background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;padding:20px 48px;border-radius:50px;text-decoration:none;font-size:20px;font-weight:700;box-shadow:0 10px 40px rgba(139,92,246,0.5);transition:transform .2s}
-.cta:hover{transform:translateY(-2px)}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin:80px 0}
-.feature{background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px}
-.feature h3{color:#a78bfa;font-size:20px;margin-bottom:12px}
-.feature p{color:#e9d5ff;font-size:15px}
-.top-gifts{background:rgba(0,0,0,0.3);border-radius:20px;padding:40px;margin:60px 0}
-.top-gifts h2{font-size:32px;margin-bottom:24px;text-align:center}
-.gift-row{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
-.gift-row:last-child{border:none}
-.gift-name{font-weight:600}
-.gift-price{color:#60a5fa;font-weight:700}
-footer{text-align:center;padding:40px 20px;color:#a78bfa;font-size:14px}
-footer a{color:#60a5fa;text-decoration:none}
-@media(max-width:600px){.logo{font-size:48px}.tagline{font-size:18px}.cta{padding:16px 32px;font-size:16px}}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0520;color:#fff;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,rgba(139,92,246,0.3),transparent 50%),radial-gradient(circle at 80% 80%,rgba(59,130,246,0.3),transparent 50%);z-index:-1;animation:float 20s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-30px)}}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;backdrop-filter:blur(20px);background:rgba(10,5,32,0.7);border-bottom:1px solid rgba(255,255,255,0.05)}
+nav .wrap{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:24px;font-weight:800;background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-cta{background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;padding:10px 24px;border-radius:30px;text-decoration:none;font-weight:600;font-size:14px;transition:transform .2s,box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(139,92,246,0.5)}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 60px;position:relative}
+.hero-content{max-width:900px}
+.badge{display:inline-block;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);padding:8px 20px;border-radius:30px;font-size:14px;color:#c4b5fd;margin-bottom:32px;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+h1{font-size:clamp(42px,8vw,96px);font-weight:900;line-height:1.05;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,#a78bfa 50%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradient 6s ease infinite}
+@keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.sub{font-size:clamp(16px,2.5vw,22px);color:#c4b5fd;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto}
+.cta-group{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+.cta{background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;padding:20px 40px;border-radius:50px;text-decoration:none;font-size:18px;font-weight:700;box-shadow:0 20px 50px rgba(139,92,246,0.4);transition:transform .3s,box-shadow .3s;display:inline-flex;align-items:center;gap:10px}
+.cta:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 30px 60px rgba(139,92,246,0.6)}
+.cta.outline{background:transparent;border:2px solid rgba(255,255,255,0.2);box-shadow:none}
+.cta.outline:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.4)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;max-width:600px;margin:0 auto}
+.stat{text-align:center}
+.stat-num{font-size:36px;font-weight:800;background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:13px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+section{padding:100px 20px;position:relative}
+.container{max-width:1200px;margin:0 auto}
+.section-title{font-size:clamp(32px,5vw,56px);font-weight:800;text-align:center;margin-bottom:16px;background:linear-gradient(135deg,#fff,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-sub{text-align:center;color:#9ca3af;font-size:18px;margin-bottom:64px;max-width:600px;margin-left:auto;margin-right:auto}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.feature{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:32px;transition:all .4s;cursor:pointer;position:relative;overflow:hidden}
+.feature::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(59,130,246,0.1));opacity:0;transition:opacity .4s}
+.feature:hover{transform:translateY(-8px);border-color:rgba(139,92,246,0.3);box-shadow:0 20px 40px rgba(139,92,246,0.2)}
+.feature:hover::before{opacity:1}
+.feature-icon{font-size:48px;margin-bottom:20px;display:block}
+.feature h3{font-size:22px;margin-bottom:12px;color:#fff;position:relative}
+.feature p{color:#c4b5fd;font-size:15px;position:relative}
+.gifts-table{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;max-width:800px;margin:0 auto}
+.gift-head{display:grid;grid-template-columns:60px 1fr auto;padding:20px 28px;background:rgba(139,92,246,0.1);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#a78bfa}
+.gift-row{display:grid;grid-template-columns:60px 1fr auto;padding:20px 28px;border-top:1px solid rgba(255,255,255,0.05);align-items:center;transition:background .3s;cursor:pointer}
+.gift-row:hover{background:rgba(139,92,246,0.08)}
+.gift-rank{font-weight:800;color:#a78bfa;font-size:18px}
+.gift-name{font-weight:600;font-size:16px}
+.gift-sub{font-size:12px;color:#9ca3af;margin-top:2px}
+.gift-price{text-align:right}
+.gift-ton{color:#60a5fa;font-weight:700;font-size:18px}
+.gift-rub{font-size:13px;color:#9ca3af;margin-top:2px}
+.calc{background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px;max-width:600px;margin:0 auto;text-align:center}
+.calc label{display:block;font-size:14px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.calc select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:16px 20px;border-radius:12px;font-size:16px;width:100%;max-width:320px;margin-bottom:24px;cursor:pointer}
+.calc-result{font-size:48px;font-weight:800;background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:20px 0}
+.calc-sub{color:#c4b5fd;font-size:16px;margin-bottom:28px}
+.faq{max-width:700px;margin:0 auto}
+.faq-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.faq-item.open{border-color:rgba(139,92,246,0.3)}
+.faq-q{padding:24px 28px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:17px}
+.faq-arrow{transition:transform .3s;color:#a78bfa}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s,padding .4s;padding:0 28px;color:#c4b5fd;font-size:15px}
+.faq-item.open .faq-a{max-height:200px;padding:0 28px 24px}
+footer{padding:60px 20px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);color:#6b7280;font-size:14px}
+footer a{color:#a78bfa;text-decoration:none;margin:0 12px}
+footer a:hover{color:#60a5fa}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}
+.reveal.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){.hero{padding:100px 16px 40px}.cta{padding:16px 28px;font-size:16px}.feature{padding:24px}.gift-head,.gift-row{padding:16px 20px;grid-template-columns:40px 1fr auto}.gift-ton{font-size:16px}.calc{padding:28px 20px}.calc-result{font-size:36px}}
 </style>
 </head>
 <body>
-<div class="container">
-<header>
-<h1 class="logo">💎 GiftIQ</h1>
-<p class="tagline">Portfolio tracker for your Telegram NFT gifts</p>
+
+<nav>
+<div class="wrap">
+<div class="brand">💎 GiftIQ</div>
+<a href="https://t.me/giftiq_tg_bot" class="nav-cta">Open bot</a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-content">
+<div class="badge">🔥 Free · 24h bonus NFT case inside</div>
+<h1>Track your Telegram<br>NFT gifts collection</h1>
+<p class="sub">Real-time floor prices, rarity analytics, animated stories, AI art generator, and free daily NFT drops — all in one bot.</p>
+<div class="cta-group">
 <a href="https://t.me/giftiq_tg_bot" class="cta">🚀 Open in Telegram</a>
-</header>
+<a href="#features" class="cta outline">Learn more</a>
+</div>
+<div class="stats">
+<div class="stat"><div class="stat-num" id="s1">42+</div><div class="stat-lbl">Gifts tracked</div></div>
+<div class="stat"><div class="stat-num" id="s2">24h</div><div class="stat-lbl">Free case reset</div></div>
+<div class="stat"><div class="stat-num" id="s3">100⭐</div><div class="stat-lbl">AI art price</div></div>
+<div class="stat"><div class="stat-num" id="s4">∞</div><div class="stat-lbl">Collection size</div></div>
+</div>
+</div>
+</section>
 
+<section id="features">
+<div class="container">
+<h2 class="section-title reveal">What you get</h2>
+<p class="section-sub reveal">Everything you need to understand, flex, and grow your TG gifts collection</p>
 <div class="features">
-<div class="feature">
-<h3>📊 Real-time pricing</h3>
-<p>Track floor prices from Tonnel, MRKT, and other TON marketplaces. See your collection total in TON and USD.</p>
-</div>
-<div class="feature">
-<h3>🎬 Share animations</h3>
-<p>Generate beautiful animated cards of your collection for Instagram and TikTok stories.</p>
-</div>
-<div class="feature">
-<h3>🎁 Free NFT case</h3>
-<p>Bonus daily free case from Epic Gift inside the bot. Real NFTs you can withdraw to your wallet.</p>
-</div>
-<div class="feature">
-<h3>🎨 AI art generator</h3>
-<p>Create unique AI-generated images using Google Gemini. Only 100 Stars per generation.</p>
+<div class="feature reveal"><span class="feature-icon">📊</span><h3>Real-time pricing</h3><p>Floor prices from Tonnel, MRKT, and other TON marketplaces. See your total in TON and USD.</p></div>
+<div class="feature reveal"><span class="feature-icon">🎬</span><h3>Share animations</h3><p>Generate beautiful animated story cards with your collection stats. Instagram, TikTok ready.</p></div>
+<div class="feature reveal"><span class="feature-icon">🎁</span><h3>Free NFT case</h3><p>Daily free case from Epic Gift. Real withdrawable NFT gifts. Resets every 24 hours.</p></div>
+<div class="feature reveal"><span class="feature-icon">🎨</span><h3>AI art generator</h3><p>Create unique Google Gemini-powered images from text prompts. Only 100 Stars.</p></div>
+<div class="feature reveal"><span class="feature-icon">🔔</span><h3>Price alerts</h3><p>Push notifications when your gifts rise or fall by 10%. Catch arbitrage opportunities.</p></div>
+<div class="feature reveal"><span class="feature-icon">💱</span><h3>Direct marketplaces</h3><p>One-tap access to Tonnel, MRKT, and xRocket P2P to sell or buy gifts instantly.</p></div>
 </div>
 </div>
+</section>
 
-<div class="top-gifts">
-<h2>🔥 Top gifts right now</h2>
-<div class="gift-row"><span class="gift-name">Plush Pepe</span><span class="gift-price">450 TON</span></div>
-<div class="gift-row"><span class="gift-name">Durov's Cap</span><span class="gift-price">180 TON</span></div>
-<div class="gift-row"><span class="gift-name">Precious Peach</span><span class="gift-price">120 TON</span></div>
-<div class="gift-row"><span class="gift-name">Gem Signet</span><span class="gift-price">95 TON</span></div>
-<div class="gift-row"><span class="gift-name">Ion Gem</span><span class="gift-price">75 TON</span></div>
-<div class="gift-row"><span class="gift-name">LoliPop</span><span class="gift-price">60 TON</span></div>
-<div style="text-align:center;margin-top:24px;color:#c4b5fd">+40 more inside the bot</div>
+<section>
+<div class="container">
+<h2 class="section-title reveal">🔥 Top gifts right now</h2>
+<p class="section-sub reveal">Live floor prices from TON marketplaces</p>
+<div class="gifts-table reveal">
+<div class="gift-head"><span>#</span><span>Gift</span><span>Floor</span></div>
+<div class="gift-row"><span class="gift-rank">1</span><div><div class="gift-name">Plush Pepe</div><div class="gift-sub">Rare TON NFT</div></div><div class="gift-price"><div class="gift-ton">450 TON</div><div class="gift-rub">~157,500 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">2</span><div><div class="gift-name">Durov's Cap</div><div class="gift-sub">Legendary</div></div><div class="gift-price"><div class="gift-ton">180 TON</div><div class="gift-rub">~63,000 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">3</span><div><div class="gift-name">Precious Peach</div><div class="gift-sub">Epic</div></div><div class="gift-price"><div class="gift-ton">120 TON</div><div class="gift-rub">~42,000 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">4</span><div><div class="gift-name">Gem Signet</div><div class="gift-sub">Epic</div></div><div class="gift-price"><div class="gift-ton">95 TON</div><div class="gift-rub">~33,250 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">5</span><div><div class="gift-name">Ion Gem</div><div class="gift-sub">Rare</div></div><div class="gift-price"><div class="gift-ton">75 TON</div><div class="gift-rub">~26,250 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">6</span><div><div class="gift-name">LoliPop</div><div class="gift-sub">Rare</div></div><div class="gift-price"><div class="gift-ton">60 TON</div><div class="gift-rub">~21,000 ₽</div></div></div>
+<div class="gift-row"><span class="gift-rank">7</span><div><div class="gift-name">Snoop Dogg</div><div class="gift-sub">Common</div></div><div class="gift-price"><div class="gift-ton">1.8 TON</div><div class="gift-rub">~630 ₽</div></div></div>
 </div>
+<p style="text-align:center;margin-top:24px;color:#9ca3af">+ 35 more gifts tracked inside the bot</p>
+</div>
+</section>
 
-<div style="text-align:center;margin:60px 0">
-<a href="https://t.me/giftiq_tg_bot" class="cta">💎 Track my collection</a>
+<section>
+<div class="container">
+<h2 class="section-title reveal">Try it yourself</h2>
+<p class="section-sub reveal">Pick a gift and see its current floor price</p>
+<div class="calc reveal">
+<label>Select a gift</label>
+<select id="calc-select" onchange="updateCalc()">
+<option value="450">Plush Pepe</option>
+<option value="180">Durov's Cap</option>
+<option value="120">Precious Peach</option>
+<option value="95">Gem Signet</option>
+<option value="75">Ion Gem</option>
+<option value="60">LoliPop</option>
+<option value="15">Scared Cat</option>
+<option value="14">Heart Locket</option>
+<option value="12">Nail Bracelet</option>
+<option value="1.8">Snoop Dogg</option>
+</select>
+<div class="calc-result" id="calc-ton">450 TON</div>
+<div class="calc-sub" id="calc-rub">~157,500 ₽</div>
+<a href="https://t.me/giftiq_tg_bot" class="cta">Track my collection</a>
 </div>
+</div>
+</section>
 
+<section>
+<div class="container">
+<h2 class="section-title reveal">FAQ</h2>
+<p class="section-sub reveal">Common questions</p>
+<div class="faq">
+<div class="faq-item reveal">
+<div class="faq-q" onclick="toggleFaq(this)"><span>Is the bot really free?</span><span class="faq-arrow">▼</span></div>
+<div class="faq-a">Yes. Core features (adding gifts, viewing collection, floor prices, static card, free daily NFT case access) are 100% free forever. Premium features (push alerts, AI insights) are optional at 500 Stars/month.</div>
 </div>
+<div class="faq-item reveal">
+<div class="faq-q" onclick="toggleFaq(this)"><span>Do I need to connect a wallet?</span><span class="faq-arrow">▼</span></div>
+<div class="faq-a">No wallet connection needed. Just send a gift's share link to the bot and it tracks the price automatically. Your gifts stay in your Telegram profile.</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-q" onclick="toggleFaq(this)"><span>How does the free NFT case work?</span><span class="faq-arrow">▼</span></div>
+<div class="faq-a">We partnered with Epic Gift. The bot has a button inside that opens their free daily case. You get a real NFT drop that withdraws straight to your TON wallet. Case resets every 24 hours.</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-q" onclick="toggleFaq(this)"><span>What is AI art?</span><span class="faq-arrow">▼</span></div>
+<div class="faq-a">Type any description — the bot generates a unique AI image using Google Gemini. Great for stories, avatars, custom gift cards. 100 Stars per image.</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-q" onclick="toggleFaq(this)"><span>Which marketplaces do you support?</span><span class="faq-arrow">▼</span></div>
+<div class="faq-a">We fetch prices from Tonnel Network, MRKT, and Portals Market — the main TON NFT marketplaces for Telegram gifts.</div>
+</div>
+</div>
+</div>
+</section>
+
+<section style="text-align:center;padding:120px 20px">
+<div class="container">
+<h2 class="section-title reveal">Ready to track?</h2>
+<p class="section-sub reveal">Join collectors tracking their Telegram NFT gifts</p>
+<a href="https://t.me/giftiq_tg_bot" class="cta reveal">🚀 Open GiftIQ in Telegram</a>
+</div>
+</section>
+
 <footer>
-GiftIQ · <a href="https://t.me/giftiq_tg_bot">Bot</a> · <a href="https://t.me/giftiq_news">News Channel</a>
+<div>💎 GiftIQ · Portfolio tracker for Telegram NFT gifts</div>
+<div style="margin-top:16px"><a href="https://t.me/giftiq_tg_bot">Bot</a>·<a href="https://t.me/giftiq_news">News</a>·<a href="https://bsky.app/profile/giftiq.bsky.social">Bluesky</a></div>
+<div style="margin-top:20px;font-size:12px">© 2026 GiftIQ. Not affiliated with Telegram.</div>
 </footer>
+
+<script>
+const prices={450:'Plush Pepe',180:"Durov's Cap"};
+function updateCalc(){const s=document.getElementById('calc-select');const v=parseFloat(s.value);document.getElementById('calc-ton').textContent=v+' TON';document.getElementById('calc-rub').textContent='~'+Math.round(v*350).toLocaleString('ru-RU').replace(/,/g,' ')+' ₽'}
+function toggleFaq(el){el.parentElement.classList.toggle('open')}
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+// Animated counter for stats
+function animateNum(el,target,suffix){let cur=0;const step=target/50;const timer=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(timer)}el.textContent=Math.floor(cur)+suffix},30)}
+window.addEventListener('load',()=>{setTimeout(()=>{animateNum(document.getElementById('s1'),42,'+')},200)});
+</script>
 </body>
 </html>
