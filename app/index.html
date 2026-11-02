@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GiftIQ</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js" async onload="initTg()"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -115,7 +115,8 @@
 </div>
 
 <script>
-const tg = window.Telegram && window.Telegram.WebApp;
+// SDK Telegram грузится асинхронно и может не загрузиться (telegram.org блокируют) — берём его лениво
+const sdk = () => window.Telegram && window.Telegram.WebApp;
 const BOT = 'https://t.me/giftiq_tg_bot';
 const CHANNEL = 'https://t.me/giftIQ_news';
 const $ = id => document.getElementById(id);
@@ -136,9 +137,26 @@ function readData() {
 const data = readData() || {g: []};
 let rate = data.r || 100;
 
-function open(url) {
-  if (tg && tg.openTelegramLink && url.startsWith('https://t.me/')) tg.openTelegramLink(url);
-  else window.open(url, '_blank');
+// событие в клиент Telegram напрямую — то же, что делает SDK внутри
+function postEvent(type, data) {
+  const msg = JSON.stringify({eventType: type, eventData: data});
+  if (window.TelegramWebviewProxy) window.TelegramWebviewProxy.postEvent(type, JSON.stringify(data));
+  else if (window.external && 'notify' in window.external) window.external.notify(msg);
+  else window.parent.postMessage(msg, '*');
+}
+function openLink(url) {
+  const tg = sdk();
+  const isTg = url.startsWith('https://t.me/');
+  try {
+    if (isTg && tg && tg.openTelegramLink) return tg.openTelegramLink(url);
+    if (!isTg && tg && tg.openLink) return tg.openLink(url);
+    if (window.TelegramWebviewProxy || window.parent !== window) {
+      const u = new URL(url);
+      return isTg ? postEvent('web_app_open_tg_link', {path_full: u.pathname + u.search})
+                  : postEvent('web_app_open_link', {url});
+    }
+  } catch (e) { /* ниже — обычный переход */ }
+  location.href = url;
 }
 function img(src, alt) {
   return `<img src="${src}" alt="" loading="lazy" onerror="this.outerHTML='<div class=ph>🎁</div>'">`;
@@ -201,6 +219,7 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   $('mine').hidden = b.dataset.tab !== 'mine';
   $('market').hidden = b.dataset.tab !== 'market';
   if (b.dataset.tab === 'market' && !market.length) loadMarket();
+  const tg = sdk();
   tg && tg.HapticFeedback && tg.HapticFeedback.selectionChanged();
 });
 document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
@@ -208,15 +227,19 @@ document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
   sortBy = b.dataset.sort; renderMarket();
 });
 $('search').oninput = renderMarket;
-document.addEventListener('click', e => { const row = e.target.closest('.row'); if (row) open(row.dataset.link); });
-$('caseBtn').onclick = () => open(data.e || 'https://t.me/epic_gift_bot/app');
-$('addBtn').onclick = () => { open(BOT); tg && tg.close(); };
-$('newsBtn').onclick = () => open(CHANNEL);
+document.addEventListener('click', e => { const row = e.target.closest('.row'); if (row) openLink(row.dataset.link); });
+$('caseBtn').onclick = () => openLink(data.e || 'https://t.me/epic_gift_bot/app');
+$('addBtn').onclick = () => openLink(BOT);
+$('newsBtn').onclick = () => openLink(CHANNEL);
 
-if (tg) {
+function initTg() {
+  const tg = sdk();
+  if (!tg) return;
   tg.ready(); tg.expand();
   try { tg.setHeaderColor('#0a0520'); tg.setBackgroundColor('#0a0520'); } catch (e) {}
 }
+initTg();
+postEvent('web_app_ready', {});   // если SDK не загрузился — всё равно говорим клиенту, что страница готова
 renderMine();
 loadRate();
 </script>
