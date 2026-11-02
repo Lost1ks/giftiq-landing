@@ -70,10 +70,12 @@
     display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
     background: linear-gradient(transparent, var(--bg) 35%);
   }
-  .actions button {
-    border: 0; border-radius: 14px; padding: 13px 8px; font: 700 14px Montserrat, sans-serif; cursor: pointer;
+  .actions a {
+    display: block; text-align: center; text-decoration: none;
+    border-radius: 14px; padding: 13px 8px; font: 700 14px Montserrat, sans-serif; cursor: pointer;
     background: var(--card); color: var(--text); border: 1px solid var(--line);
   }
+  .actions .ver { grid-column: 1 / -1; text-align: center; color: var(--muted); font-size: 10px; font-weight: 600; opacity: .7; }
   .actions .gold { grid-column: 1 / -1; background: linear-gradient(90deg, #f5c451, #ffdd8a); color: #2a1a00; border: 0; }
   [hidden] { display: none !important; }
 </style>
@@ -109,9 +111,10 @@
 </section>
 
 <div class="actions">
-  <button class="gold" id="caseBtn">🎁 Бесплатный кейс Epic Gift</button>
-  <button id="addBtn">➕ Добавить подарок</button>
-  <button id="newsBtn">📢 Канал</button>
+  <a class="gold link" id="caseBtn" href="https://t.me/epic_gift_bot/app">🎁 Бесплатный кейс Epic Gift</a>
+  <a class="link" id="addBtn" href="https://t.me/giftiq_tg_bot">➕ Добавить подарок</a>
+  <a class="link" id="newsBtn" href="https://t.me/giftIQ_news">📢 Канал</a>
+  <div class="ver" id="ver"></div>
 </div>
 
 <script>
@@ -144,19 +147,25 @@ function postEvent(type, data) {
   else if (window.external && 'notify' in window.external) window.external.notify(msg);
   else window.parent.postMessage(msg, '*');
 }
+const VERSION = 'v3';
+function status(how) { $('ver').textContent = `GiftIQ ${VERSION}` + (how ? ` · ${how}` : ''); }
+
+// -> способ, которым открыли ссылку (виден внизу экрана — помогает понять, что сработало)
 function openLink(url) {
   const tg = sdk();
   const isTg = url.startsWith('https://t.me/');
+  let how = 'href';
   try {
-    if (isTg && tg && tg.openTelegramLink) return tg.openTelegramLink(url);
-    if (!isTg && tg && tg.openLink) return tg.openLink(url);
-    if (window.TelegramWebviewProxy || window.parent !== window) {
+    if (isTg && tg && tg.openTelegramLink) { tg.openTelegramLink(url); how = 'sdk'; }
+    else if (!isTg && tg && tg.openLink) { tg.openLink(url); how = 'sdk'; }
+    else if (window.TelegramWebviewProxy || (window.external && 'notify' in window.external) || window.parent !== window) {
       const u = new URL(url);
-      return isTg ? postEvent('web_app_open_tg_link', {path_full: u.pathname + u.search})
-                  : postEvent('web_app_open_link', {url});
-    }
-  } catch (e) { /* ниже — обычный переход */ }
-  location.href = url;
+      if (isTg) postEvent('web_app_open_tg_link', {path_full: u.pathname + u.search});
+      else postEvent('web_app_open_link', {url});
+      how = window.TelegramWebviewProxy ? 'proxy' : window.parent !== window ? 'iframe' : 'external';
+    } else location.href = url;
+  } catch (e) { how = 'err: ' + e.message; location.href = url; }
+  status(how);
 }
 function img(src, alt) {
   return `<img src="${src}" alt="" loading="lazy" onerror="this.outerHTML='<div class=ph>🎁</div>'">`;
@@ -228,14 +237,15 @@ document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
 });
 $('search').oninput = renderMarket;
 document.addEventListener('click', e => { const row = e.target.closest('.row'); if (row) openLink(row.dataset.link); });
-$('caseBtn').onclick = () => openLink(data.e || 'https://t.me/epic_gift_bot/app');
-$('addBtn').onclick = () => openLink(BOT);
-$('newsBtn').onclick = () => openLink(CHANNEL);
+if (data.e) $('caseBtn').href = data.e;
+document.querySelectorAll('a.link').forEach(a => a.onclick = e => { e.preventDefault(); openLink(a.href); });
+status(sdk() ? 'sdk ok' : 'без sdk');
 
 function initTg() {
   const tg = sdk();
   if (!tg) return;
   tg.ready(); tg.expand();
+  try { status('sdk ok'); } catch (e) {}
   try { tg.setHeaderColor('#0a0520'); tg.setBackgroundColor('#0a0520'); } catch (e) {}
 }
 initTg();
