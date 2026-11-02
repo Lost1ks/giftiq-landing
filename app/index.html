@@ -77,6 +77,11 @@
   }
   .actions .ver { grid-column: 1 / -1; text-align: center; color: var(--muted); font-size: 10px; font-weight: 600; opacity: .7; }
   .actions .gold { grid-column: 1 / -1; background: linear-gradient(90deg, #f5c451, #ffdd8a); color: #2a1a00; border: 0; }
+  .add { display: flex; gap: 8px; }
+  .add input { margin: 0; flex: 1; min-width: 0; }
+  .add button { border: 0; border-radius: 12px; padding: 0 16px; background: var(--violet); color: #fff; font: 700 14px Montserrat, sans-serif; cursor: pointer; }
+  .hint { color: var(--muted); font-size: 12px; font-weight: 600; margin: 8px 2px 12px; line-height: 1.4; }
+  .hint.err { color: #ff8a9a; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -98,7 +103,14 @@
   <button data-tab="market">Рынок</button>
 </div>
 
-<section id="mine"><div class="list" id="mineList"></div></section>
+<section id="mine">
+  <div class="add">
+    <input class="search" id="giftInput" placeholder="Ссылка: t.me/nft/…" autocomplete="off">
+    <button id="giftAdd">Добавить</button>
+  </div>
+  <div class="hint" id="giftHint">Открой подарок в профиле → ⋯ → Поделиться → Копировать ссылку и вставь сюда</div>
+  <div class="list" id="mineList"></div>
+</section>
 
 <section id="market" hidden>
   <div class="seg">
@@ -112,7 +124,7 @@
 
 <div class="actions">
   <a class="gold link" id="caseBtn" href="https://t.me/epic_gift_bot/app">🎁 Бесплатный кейс Epic Gift</a>
-  <a class="link" id="addBtn" href="https://t.me/giftiq_tg_bot">➕ Добавить подарок</a>
+  <a id="addBtn" href="#">➕ Добавить подарок</a>
   <a class="link" id="newsBtn" href="https://t.me/giftIQ_news">📢 Канал</a>
   <div class="ver" id="ver"></div>
 </div>
@@ -147,7 +159,7 @@ function postEvent(type, data) {
   else if (window.external && 'notify' in window.external) window.external.notify(msg);
   else window.parent.postMessage(msg, '*');
 }
-const VERSION = 'v3';
+const VERSION = 'v4';
 function status(how) { $('ver').textContent = `GiftIQ ${VERSION}` + (how ? ` · ${how}` : ''); }
 
 // -> способ, которым открыли ссылку (виден внизу экрана — помогает понять, что сработало)
@@ -240,6 +252,32 @@ document.addEventListener('click', e => { const row = e.target.closest('.row'); 
 if (data.e) $('caseBtn').href = data.e;
 document.querySelectorAll('a.link').forEach(a => a.onclick = e => { e.preventDefault(); openLink(a.href); });
 status(sdk() ? 'sdk ok' : 'без sdk');
+
+// добавление подарка: открываем бота с /start add_<Slug-Number>, бот добавит и пришлёт цену
+function parseGift(s) {
+  const m = s.trim().match(/(?:nft\/)?([A-Za-z0-9]+-\d+)(?![\w-])/);
+  return m ? m[1] : null;
+}
+function addGift() {
+  const slug = parseGift($('giftInput').value);
+  const hint = $('giftHint');
+  if (!slug) {
+    hint.classList.add('err');
+    hint.textContent = 'Не похоже на ссылку подарка. Нужна ссылка вида t.me/nft/SnoopDogg-471247';
+    return;
+  }
+  hint.classList.remove('err');
+  hint.textContent = 'Открываю бота — он добавит подарок и пришлёт цену. Потом открой приложение заново из его сообщения.';
+  openLink(`${BOT}?start=add_${slug}`);
+}
+$('giftAdd').onclick = addGift;
+$('giftInput').onkeydown = e => { if (e.key === 'Enter') addGift(); };
+$('addBtn').onclick = e => {
+  e.preventDefault();
+  document.querySelector('[data-tab=mine]').click();
+  $('giftInput').focus();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
 
 function initTg() {
   const tg = sdk();
